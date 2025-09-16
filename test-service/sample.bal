@@ -12,7 +12,6 @@ public type PasswordGrantConfig record {|
     decimal clockSkew = 0;
     map<string> optionalParams?;
     oauth2:CredentialBearer credentialBearer = oauth2:AUTH_HEADER_BEARER;
-    oauth2:ClientConfiguration clientConfig = {};
 |};
 
 configurable PasswordGrantConfig passwordConfig = ?;
@@ -28,7 +27,7 @@ final http:OAuth2PasswordGrantConfig config = {
     clockSkew: passwordConfig.clockSkew,
     optionalParams: passwordConfig.optionalParams,
     credentialBearer: passwordConfig.credentialBearer,
-    clientConfig: passwordConfig.clientConfig
+    clientConfig : {}
 };
 
 configurable string atsClientUrl = ?;
