@@ -4,7 +4,7 @@ configurable http:OAuth2PasswordGrantConfig config = ?;
 
 configurable string atsClientUrl = ?;
 
-final http:Client atsClient = check new (atsClientUrl, {
+final http:Client _atsClient = check new (atsClientUrl, {
     auth: {...config},
     httpVersion: http:HTTP_1_1,
     http1Settings: {keepAlive: http:KEEPALIVE_NEVER},
@@ -21,8 +21,13 @@ final http:Client atsClient = check new (atsClientUrl, {
     }
 });
 
-service / on new http:Listener(8090) {
-    resource function get .(string name) returns string {
-        return "Hello";
+isolated function getAtsClient() returns http:Client|error {
+    return _atsClient;
+}
+
+isolated service / on new http:Listener(8090) {
+    isolated resource function get .() returns json|error {
+        var clientObj = check getAtsClient();
+        return clientObj->get("/");
     }
 }
