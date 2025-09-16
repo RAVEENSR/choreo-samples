@@ -20,3 +20,9 @@ final http:Client atsClient = check new (atsClientUrl, {
         ]
     }
 });
+
+service / on new http:Listener(8090) {
+    resource function get .(string name) returns string {
+        return "Hello";
+    }
+}
