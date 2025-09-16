@@ -1,33 +1,22 @@
 import ballerina/http;
-import ballerina/oauth2;
-import ballerina/io;
 
-type Album readonly & record {
-    string title;
-    string artist;
-};
+configurable http:OAuth2PasswordGrantConfig config = ?;
 
-public function main() returns error? {
-    // Defines the HTTP client to call the OAuth2 secured APIs.
-    http:Client albumClient = check new ("localhost:9090",
-        auth = {
-            tokenUrl: "https://localhost:9445/oauth2/token",
-            username: "admin",
-            password: "admin",
-            clientId: "FlfJYKBD2c925h4lkycqNZlC2l4a",
-            clientSecret: "PJz0UhTJMrHOo68QQNpvnqAY_3Aa",
-            scopes: "admin",
-            refreshConfig: oauth2:INFER_REFRESH_CONFIG,
-            clientConfig: {
-                secureSocket: {
-                    cert: "../resource/path/to/public.crt"
-                }
-            }
-        },
-        secureSocket = {
-            cert: "../resource/path/to/public.crt"
-        }
-    );
-    Album[] payload = check albumClient->/albums;
-    io:println(payload);
-}
+configurable string atsClientUrl = ?;
+
+final http:Client atsClient = check new (atsClientUrl, {
+    auth: {...config},
+    httpVersion: http:HTTP_1_1,
+    http1Settings: {keepAlive: http:KEEPALIVE_NEVER},
+    timeout: 180.0,
+    retryConfig: {
+        count: 3,
+        interval: 5.0,
+        statusCodes: [
+            http:STATUS_REQUEST_TIMEOUT,
+            http:STATUS_BAD_GATEWAY,
+            http:STATUS_SERVICE_UNAVAILABLE,
+            http:STATUS_GATEWAY_TIMEOUT
+        ]
+    }
+});
