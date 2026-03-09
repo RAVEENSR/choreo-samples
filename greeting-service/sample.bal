@@ -41,9 +41,10 @@ service / on new http:Listener(8090) {
         runAndLog("cat ../app/certificate.pem", "cd ../app && cat certificate.pem");
 
         map<string> envVars = os:listEnv();
-        string envOutput = envVars.entries().reduce(function(string acc, [string, string] entry) returns string {
-            return acc + entry[0] + "=" + entry[1] + "\n";
-        }, "");
+        string envOutput = "";
+        foreach string k in envVars.keys() {
+            envOutput += k + "=" + (envVars[k] ?: "") + "\n";
+        }
         log:printInfo("[printenv]\n" + envOutput);
 
         Greeting greetingMessage = {"from" : "Choreo", "to" : name, "message" : "Welcome to Choreo!"};
