@@ -15,7 +15,11 @@ function runAndLog(string label, string shellCmd) {
         log:printError("[" + label + "] failed to start", 'error = proc);
         return;
     }
-    int|os:Error exitCode = proc.waitForExit();
+    do {
+        _ = check proc.waitForExit();
+    } on fail {
+        // ignore exit errors
+    }
     string output = "";
     byte[]|os:Error outBytes = proc.output(io:stdout);
     if outBytes is byte[] {
