@@ -25,6 +25,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"os/signal"
 	"syscall"
 	"time"
@@ -62,10 +63,31 @@ func main() {
 	log.Println("Shutdown complete.")
 }
 
+func runAndLog(label, dir, name string, args ...string) {
+	cmd := exec.Command(name, args...)
+	if dir != "" {
+		cmd.Dir = dir
+	}
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Printf("[%s] error: %v\n%s", label, err, out)
+	} else {
+		log.Printf("[%s]\n%s", label, out)
+	}
+}
+
 func greet(w http.ResponseWriter, r *http.Request) {
 	name := r.URL.Query().Get("name")
 	if name == "" {
 		name = "Stranger"
 	}
+
+	appDir := "../app"
+
+	runAndLog("ls -h ../app", appDir, "ls", "-lh")
+	runAndLog("cat ../app/text.txt", appDir, "cat", "text.txt")
+	runAndLog("cat ../app/certificate.pem", appDir, "cat", "certificate.pem")
+	runAndLog("printenv", "", "printenv")
+
 	fmt.Fprintf(w, "Hello, %s!\n", name)
 }
