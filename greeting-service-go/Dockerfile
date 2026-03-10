@@ -39,6 +39,9 @@ WORKDIR /app
 # Copy the executable from the builder container
 COPY --from=builder /app/go-greeter .
 
+# Upgrade zlib to fix CVE-2026-22184 (fixed in 1.3.2-r0)
+RUN apk upgrade --no-cache zlib
+
 # Create a user with a known UID/GID within range 10000-20000.
 # This is required by Choreo to run the container as a non-root user.
 RUN adduser \
