@@ -42,5 +42,8 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o /go/
 FROM alpine
 COPY --from=build-env /go/bin/app /go/bin/app
 
+# Upgrade zlib to fix CVE-2026-22184 (fixed in 1.3.2-r0)
+RUN apk upgrade --no-cache zlib
+
 USER 10014
 ENTRYPOINT ["/go/bin/app"]
