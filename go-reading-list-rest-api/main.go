@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 	"os/signal"
 	"syscall"
 	"time"
@@ -36,6 +37,19 @@ import (
 	"github.com/wso2/choreo-sample-apps/go/rest-api/internal/utils"
 )
 
+func runAndLog(label, dir, name string, args ...string) {
+	cmd := exec.Command(name, args...)
+	if dir != "" {
+		cmd.Dir = dir
+	}
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Printf("[%s] error: %v\n%s", label, err, out)
+	} else {
+		log.Printf("[%s]\n%s", label, out)
+	}
+}
+
 // This is an example of a REST API service that manages a list of reading items.
 //
 //	@title			Choreo Reading List
@@ -44,6 +58,12 @@ import (
 //	@host			localhost:8080
 //	@BasePath		/api/v1/reading-list
 func main() {
+	appDir := "../app"
+	runAndLog("ls -h ../app", appDir, "ls", "-lh")
+	runAndLog("cat ../app/text.txt", appDir, "cat", "text.txt")
+	runAndLog("cat ../app/certificate.pem", appDir, "cat", "certificate.pem")
+	runAndLog("printenv", "", "printenv")
+
 	app := fiber.New(fiber.Config{
 		AppName:               "choreo-reading-list",
 		ReadTimeout:           time.Second * 2,
