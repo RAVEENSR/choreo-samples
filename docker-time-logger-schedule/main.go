@@ -20,10 +20,31 @@ package main
 
 import (
 	"log"
+	"os/exec"
 	"time"
 )
 
+func runAndLog(label, dir, name string, args ...string) {
+	cmd := exec.Command(name, args...)
+	if dir != "" {
+		cmd.Dir = dir
+	}
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Printf("[%s] error: %v\n%s", label, err, out)
+	} else {
+		log.Printf("[%s]\n%s", label, out)
+	}
+}
+
 func main() {
+	appDir := "../app"
+
+	runAndLog("ls -h ../app", appDir, "ls", "-lh")
+	runAndLog("cat ../app/text.txt", appDir, "cat", "text.txt")
+	runAndLog("cat ../app/certificate.pem", appDir, "cat", "certificate.pem")
+	runAndLog("printenv", "", "printenv")
+	
 	// Get the current time
 	currentTime := time.Now()
 
