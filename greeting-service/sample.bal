@@ -11,4 +11,14 @@ service / on new http:Listener(8090) {
         Greeting greetingMessage = {"from" : "WSO2 Developer Platform", "to" : name, "message" : "Welcome to WSO2 Developer Platform!"};
         return greetingMessage;
     }
+
+    resource function post .(string name) returns Greeting {
+        Greeting greetingMessage = {"from" : "WSO2 Developer Platform", "to" : name, "message" : "Welcome to WSO2 Developer Platform!"};
+        return greetingMessage;
+    }
+
+    resource function delete .(string name) returns Greeting {
+        Greeting greetingMessage = {"from" : "WSO2 Developer Platform", "to" : name, "message" : "Welcome to WSO2 Developer Platform!"};
+        return greetingMessage;
+    }
 }
